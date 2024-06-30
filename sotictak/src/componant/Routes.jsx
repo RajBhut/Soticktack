@@ -11,7 +11,7 @@ export default function ComponantRoutes() {
     <Route path='/' exact element={   <BordSizeProvider>
       <Manu />
     </BordSizeProvider>}/>
-    <Route path='/game' element={<BordSizeProvider><Game/></BordSizeProvider>}/>
+    <Route path='/game/:code' element={<BordSizeProvider><Game /></BordSizeProvider>}/>
 </Routes>
 
   

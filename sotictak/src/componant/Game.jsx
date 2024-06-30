@@ -1,9 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BordSizeContext } from './Bordsizeprovider';
 import { Link } from 'react-router-dom';
+import io, { Socket } from "socket.io-client";
 
-export default function Game() {
-    const { bordSize } = useContext(BordSizeContext);
+const socket = io("http://localhost:3000");
+export default function Game({code}) {
+
+
+
+
+    const { bordSize  , gameCode} = useContext(BordSizeContext);
     const [board, setBoard] = useState(Array(bordSize * bordSize).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState('X');
     const [winner, setWinner] = useState(null);
@@ -13,7 +19,7 @@ export default function Game() {
     };
 
     const handleClick = (index) => {
-        if (board[index] || winner) return; // Prevent click if cell is occupied or game is over
+        if (board[index] || winner) return; 
         const newBoard = [...board];
         newBoard[index] = currentPlayer;
         setBoard(newBoard);
@@ -23,11 +29,11 @@ export default function Game() {
 
     const checkWinner = (board) => {
         const lines = [];
-        // Rows
+  
         for (let i = 0; i < bordSize; i++) {
             lines.push(board.slice(i * bordSize, (i + 1) * bordSize));
         }
-        // Columns
+        
         for (let i = 0; i < bordSize; i++) {
             const column = [];
             for (let j = 0; j < bordSize; j++) {
@@ -35,7 +41,7 @@ export default function Game() {
             }
             lines.push(column);
         }
-        // Diagonals
+        
         const diagonal1 = [], diagonal2 = [];
         for (let i = 0; i < bordSize; i++) {
             diagonal1.push(board[i * (bordSize + 1)]);
@@ -43,7 +49,7 @@ export default function Game() {
         }
         lines.push(diagonal1, diagonal2);
     
-        // Check for winner
+    
         for (let line of lines) {
             if (line.every(cell => cell === 'X')) {
                 setWinner('X');
@@ -58,7 +64,7 @@ export default function Game() {
         if (board.every(cell => cell !== null)) {
             setWinner('Draw');
         }
-    };
+    };  
 
     useEffect(() => {
         if (winner) {
@@ -68,16 +74,20 @@ export default function Game() {
 
     return (
         <>
-            <div className='h1 '>{bordSize}</div>
-            <div className="grid w-72 h-72 " style={gridStyle}>
+        <div className='h-screen w-screen flex justify-center items-center flex-col bg-slate-400 '>
+<h1 className='mb-3'>Code: {gameCode}</h1>
+           
+            <div className="grid  " style={gridStyle}>
                 {board.map((cell, i) => (
-                    <button key={i} className=" border text-center" onClick={() => handleClick(i)}>
-                        {cell}
-                    </button>
+                    <button key={i} className="border h-16 w-16 text-center" style={{backgroundColor: cell === 'X' ? 'red' : cell === 'O' ? 'blue' : '#f9f9f9' , fontSize:30} } onClick={() => handleClick(i)}>
+                   {cell}
+               </button>
                 ))}
             </div>
             {winner && <div>Winner: {winner}</div>}
-            <Link to="/">Back to Menu</Link>
+            
+            <Link  to="/"><button className='p-2 m-10 bg-slate-200'>Back to Home</button></Link>
+                </div>
         </>
     );
 }
