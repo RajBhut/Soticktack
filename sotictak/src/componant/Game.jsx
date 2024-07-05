@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BordSizeContext } from './Bordsizeprovider';
 import { Link } from 'react-router-dom';
-import io, { Socket } from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+
+
 export default function Game({code}) {
 
 
@@ -65,8 +65,14 @@ export default function Game({code}) {
             setWinner('Draw');
         }
     };  
+    useEffect(()=>{
+
+        
+        
+    },[])
 
     useEffect(() => {
+
         if (winner) {
             alert(`Player ${winner} wins!`);
         }
@@ -85,7 +91,7 @@ export default function Game({code}) {
                 ))}
             </div>
             {winner && <div>Winner: {winner}</div>}
-            
+           
             <Link  to="/"><button className='p-2 m-10 bg-slate-200'>Back to Home</button></Link>
                 </div>
         </>

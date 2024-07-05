@@ -14,7 +14,7 @@ const Manu = () => {
      
       <button className=' p-1 w-20px h-20px bg-slate-500 text-white border' onClick={() => setBordSize(bordSize + 1)}>Increase Board Size</button>
     <button className=' p-1 w-20px h-20px' onClick={() => setBordSize(bordSize - 1)}>Decrease Board Size</button>
-      <Link  to={`/game/${gameCode}`}><button className=' p-1 text-cyan-50 bg-zinc-500'>Start Game</button></Link>
+    { gameCode ==""?<span>Enter code</span> :  <Link  to={`/game/${gameCode}`}><button className=' p-1 text-cyan-50 bg-zinc-500'>Start Game</button></Link>}
       </div>
     </div>
   );
