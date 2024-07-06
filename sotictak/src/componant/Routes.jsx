@@ -5,7 +5,7 @@ import BordSizeProvider from './Bordsizeprovider';
 import Game from './Game';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Signup from './Signup';
-import Sctest from './Sctest';
+
 
 <GoogleOAuthProvider clientId="<your_client_id>"></GoogleOAuthProvider>;
 export default function ComponantRoutes() {
@@ -16,7 +16,7 @@ export default function ComponantRoutes() {
      <Route path='/' exact element={   <BordSizeProvider>
       <Manu />
     </BordSizeProvider>}/> 
-    <Route path='/sc' exact element={<Sctest/>}/>
+    
     <Route path='/game/:code' element={<BordSizeProvider><Game /></BordSizeProvider>}/>
     <Route path='/signup' element={<GoogleOAuthProvider clientId=""> <Signup/>  </GoogleOAuthProvider>}/>
 </Routes>
