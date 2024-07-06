@@ -1,16 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { BordSizeContext } from './Bordsizeprovider';
 import { Link } from 'react-router-dom';
-import io from 'socket.io-client';
-const socket = io('http://localhost:3000');
 
-export default function Game({code}) {
+
+
+export default function SimpleGame({code}) {
 
 
 
     const [gameId, setGameId] = useState('');
     const [userId, setUserId] = useState('');
-    const [messages, setMessages] = useState([]);
+   
     const { bordSize  , gameCode} = useContext(BordSizeContext);
     const [board, setBoard] = useState(Array(bordSize * bordSize).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState('X');
@@ -25,19 +25,13 @@ const[showpopup , setShowpopup] = useState(false);
         const newBoard = [...board];
         newBoard[index] = currentPlayer;
         setBoard(newBoard);
-        socket.emit('move', { gameId, userId, index, currentPlayer });
+       
         checkWinner(newBoard);
-        console.log(board)
+       
         
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
     };
-    const joinGame = () => {
-        if (gameId && userId) {
-          socket.emit('join', { userId, gameId });
-        } else {
-          alert('Both User ID and Game ID are required');
-        }
-      };
+   
     const checkWinner = (board) => {
         const lines = [];
   
@@ -64,11 +58,11 @@ const[showpopup , setShowpopup] = useState(false);
         for (let line of lines) {
             if (line.every(cell => cell === 'X')) {
                 setWinner('X');
-                socket.emit('gameOver', { gameId, userId, winner: 'X' });
+                
                 return;
             } else if (line.every(cell => cell === 'O')) {
                 setWinner('O');
-                socket.emit('gameOver', { gameId, userId, winner: 'O' });
+             
                 return;
             }
         }
@@ -76,65 +70,14 @@ const[showpopup , setShowpopup] = useState(false);
       
         if (board.every(cell => cell !== null)) {
             setWinner('Draw');
-            socket.emit('gameOver', { gameId, userId, winner: 'Draw' });
-
+           
         }
     };  
-    useEffect(() => {
-        setBoard(Array(bordSize * bordSize).fill(null));
-        socket.emit('reset', { gameId, userId });
-        setWinner(null);
-
-socket.on('updateBoard', ({ index, currentPlayer }) => {
-    console.log('move', index, currentPlayer);
-    setBoard(prevBoard => {
-        const newBoard = [...prevBoard];
-        if (!newBoard[index] && !winner) {
-          newBoard[index] = currentPlayer;
-          checkWinner(newBoard); 
-          return newBoard;
-        }
-        return prevBoard;
-      });
-
-    setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-    });
-socket.on('reset', () => {
-    setBoard(Array(bordSize * bordSize).fill(null));
-    setWinner(null);
-    setCurrentPlayer('X');
-    });
-socket.on('gameOver', ({ winner }) => {
-    setWinner(winner);
-
-    });
-
-        socket.on('playerJoined', (userId) => {
-          setMessages((prev) => [...prev, `User ${userId} has joined the game.`]);
-        });
     
-        socket.on('playerLeft', (userId) => {
-          setMessages((prev) => [...prev, `User ${userId} has left the game.`]);
-        });
-    
-        socket.on('gameFull', (message) => {
-          alert(message);
-        });
-    
-        return () => {
-          socket.off('playerJoined');
-          socket.off('playerLeft');
-          socket.off('gameFull');
-        };
-      }, [socket]);
 
     useEffect(() => {
 
-        if (!userId) {
-            const userName = window.prompt("Please enter your name:", "");
-            if (userName) setUserId(userName); 
-          }
-
+      
 
 
 
@@ -164,10 +107,10 @@ socket.on('gameOver', ({ winner }) => {
                 ))}
             </div>
             {winner && <div>Winner: {winner}</div>}
-            <button className='drop-shadow-lg p-2 m-3 rounded-md bg-slate-200' onClick={joinGame}>Join Game</button>
+          
             <button className='drop-shadow-lg p-2 m-3 rounded-md bg-slate-200' onClick={()=>{
                 setBoard(Array(bordSize * bordSize).fill(null));
-                socket.emit('reset', { gameId, userId });
+                
                 setWinner(null);
                 
             }}>Reset</button>
@@ -178,7 +121,7 @@ socket.on('gameOver', ({ winner }) => {
                         <h1>{ ((winner==='O')||(winner ==='X'))?`Player ${winner} wins!`:'Draw'}</h1>
                         <button className="z-auto border-black bg-slate-400 rounded-md p-2 mt-3 text-center" onClick={()=>{setShowpopup(false)
                             setBoard(Array(bordSize * bordSize).fill(null));
-                            socket.emit('reset', { gameId, userId });
+                           
                             setWinner(null);    
                         }}>Close</button>
                     </div>
