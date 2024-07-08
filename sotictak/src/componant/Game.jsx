@@ -27,8 +27,7 @@ const[showpopup , setShowpopup] = useState(false);
         setBoard(newBoard);
         socket.emit('move', { gameId, userId, index, currentPlayer });
         checkWinner(newBoard);
-        console.log(board)
-        
+
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
     };
     const joinGame = () => {
