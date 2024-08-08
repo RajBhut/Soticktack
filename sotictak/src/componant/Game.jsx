@@ -134,11 +134,9 @@ SetYou(data.player);
     useEffect(() => {
 
         if (Me == '') {
-             Me = window.prompt("Please enter your name:", "");
-            if (Me) {
-                SetMe(Me);
-                setUserId(Me);
-          }}
+            let temme = window.prompt("Please enter your name:", "");
+SetMe(temme);
+         }
 
 
 
