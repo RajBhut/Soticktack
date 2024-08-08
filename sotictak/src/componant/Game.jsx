@@ -33,11 +33,11 @@ const[showpopup , setShowpopup] = useState(false);
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
     };
     const joinGame = () => {
-        if (gameId && userId) {
+        if (gameId ) {
           socket.emit('join', { userId, gameId , player:Me });
           
         } else {
-          alert('Both User ID and Game ID are required');
+          alert('Both User name required');
         }
       };
     const checkWinner = (board) => {
