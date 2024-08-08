@@ -185,7 +185,10 @@ SetMe(temme);
                             setWinner(null);    
                         }}>Close</button>
                     </div>
-<span>
+
+
+                </div>} 
+                <span>
     {
         Me ? <div>Me: {Me}</div> : null 
     }
@@ -200,8 +203,6 @@ SetMe(temme);
       <div key={i}>{message}</div>
     ))}
 </span>
-
-                </div>} 
         </>
     );
 }
