@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { BordSizeContext } from './Bordsizeprovider';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
-const socket = io('https://sotick-back.vercel.app/');
+const socket = io('https://soticktack-51cca34e027d.herokuapp.com/');
 
 export default function Game() {
 
@@ -29,8 +29,7 @@ const[showpopup , setShowpopup] = useState(false);
         setBoard(newBoard);
         socket.emit('move', { gameId, userId, index, currentPlayer });
         checkWinner(newBoard);
-        console.log(board)
-        
+
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
     };
     const joinGame = () => {
