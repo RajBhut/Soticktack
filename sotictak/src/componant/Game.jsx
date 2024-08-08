@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
 const socket = io('https://sotick-back.vercel.app/');
 
-export default function Game({code}) {
+export default function Game() {
 
 
+const [Me , SetMe] = useState('');
+const [You , SetYou] = useState('');
 
     const [gameId, setGameId] = useState('');
     const [userId, setUserId] = useState('');
@@ -33,7 +35,8 @@ const[showpopup , setShowpopup] = useState(false);
     };
     const joinGame = () => {
         if (gameId && userId) {
-          socket.emit('join', { userId, gameId });
+          socket.emit('join', { userId, gameId , player:Me });
+          
         } else {
           alert('Both User ID and Game ID are required');
         }
@@ -109,8 +112,9 @@ socket.on('gameOver', ({ winner }) => {
 
     });
 
-        socket.on('playerJoined', (userId) => {
-          setMessages((prev) => [...prev, `User ${userId} has joined the game.`]);
+        socket.on('playerJoined', (data) => {
+SetYou(data.player);
+          
         });
     
         socket.on('playerLeft', (userId) => {
@@ -130,10 +134,12 @@ socket.on('gameOver', ({ winner }) => {
 
     useEffect(() => {
 
-        if (!userId) {
-            const userName = window.prompt("Please enter your name:", "");
-            if (userName) setUserId(userName); 
-          }
+        if (Me == '') {
+             Me = window.prompt("Please enter your name:", "");
+            if (Me) {
+                SetMe(Me);
+                setUserId(Me);
+          }}
 
 
 
@@ -182,6 +188,22 @@ socket.on('gameOver', ({ winner }) => {
                             setWinner(null);    
                         }}>Close</button>
                     </div>
+<span>
+    {
+        Me ? <div>Me: {Me}</div> : null 
+    }
+</span>
+<span>
+    {
+        You ? <div>Opponant: {You}</div> : null 
+    }
+</span>
+<span>
+    {messages.map((message, i) => (
+      <div key={i}>{message}</div>
+    ))}
+</span>
+
                 </div>} 
         </>
     );
