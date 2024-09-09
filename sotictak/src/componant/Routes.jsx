@@ -14,7 +14,7 @@ export default function ComponantRoutes() {
   return (<>
   <BrowserRouter>
 <Routes>
-
+    
      <Route path='/' exact element={   <BordSizeProvider>
       <Manu />
     </BordSizeProvider>}/> 

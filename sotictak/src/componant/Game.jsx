@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { BordSizeContext } from './Bordsizeprovider';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
-const socket = io('https://soticktack-51cca34e027d.herokuapp.com/');
+const socket = io('https://sotick-back.onrender.com');
 
 export default function Game() {
 
