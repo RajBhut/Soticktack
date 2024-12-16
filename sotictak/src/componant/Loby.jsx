@@ -26,6 +26,7 @@ export default function Lobby() {
 
     const handleAvailableGames = (data) => {
       setAvailableGames(data);
+      console.log(data);
     };
     socket.on("game_full", () => {});
     socket.on("avalable_games_out", handleAvailableGames);
