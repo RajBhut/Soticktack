@@ -1,14 +1,15 @@
 import React, { useState, useContext, useEffect } from "react";
 import { BordSizeContext } from "./Bordsizeprovider";
-import { Link } from "react-router-dom";
-import io from "socket.io-client";
-const socket = io("https://sotickteck-408da48fd6a7.herokuapp.com");
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import { SocketContext } from "./Socketprovider";
 
 export default function Game() {
+  const { gameId } = useParams();
+  const { socket, setGameId } = useContext(SocketContext);
   const [Me, SetMe] = useState("");
   const [You, SetYou] = useState("");
-
-  const [gameId, setGameId] = useState("");
+  const navinagtor = useNavigate();
   const [userId, setUserId] = useState("");
   const [messages, setMessages] = useState([]);
   const { bordSize, gameCode } = useContext(BordSizeContext);
@@ -19,24 +20,23 @@ export default function Game() {
   const gridStyle = {
     gridTemplateColumns: `repeat(${bordSize}, minmax(0, 1fr))`,
   };
+  useEffect(() => {
+    if (!socket) {
+      alert("no socket");
+    }
+  }, []);
 
   const handleClick = (index) => {
     if (board[index] || winner) return;
     const newBoard = [...board];
     newBoard[index] = currentPlayer;
     setBoard(newBoard);
-    socket.emit("move", { gameId, userId, index, currentPlayer });
+    socket.emit("move", { gameId, index, currentPlayer });
     checkWinner(newBoard);
 
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
   };
-  const joinGame = () => {
-    if (gameId) {
-      socket.emit("join", { userId, gameId, player: Me });
-    } else {
-      alert("Both User name required");
-    }
-  };
+
   const checkWinner = (board) => {
     const lines = [];
 
@@ -78,24 +78,13 @@ export default function Game() {
     }
   };
   useEffect(() => {
+    if (!socket) navinagtor("/loby");
+  });
+  useEffect(() => {
     setBoard(Array(bordSize * bordSize).fill(null));
     socket.emit("reset", { gameId, userId });
     setWinner(null);
 
-    socket.on("updateBoard", ({ index, currentPlayer }) => {
-      console.log("move", index, currentPlayer);
-      setBoard((prevBoard) => {
-        const newBoard = [...prevBoard];
-        if (!newBoard[index] && !winner) {
-          newBoard[index] = currentPlayer;
-          checkWinner(newBoard);
-          return newBoard;
-        }
-        return prevBoard;
-      });
-
-      setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-    });
     socket.on("reset", () => {
       setBoard(Array(bordSize * bordSize).fill(null));
       setWinner(null);
@@ -103,10 +92,6 @@ export default function Game() {
     });
     socket.on("gameOver", ({ winner }) => {
       setWinner(winner);
-    });
-
-    socket.on("playerJoined", (data) => {
-      SetYou(data.player);
     });
 
     socket.on("playerLeft", (userId) => {
@@ -124,6 +109,29 @@ export default function Game() {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUpdateBoard = ({ index, currentPlayer }) => {
+      setBoard((prevBoard) => {
+        const newBoard = [...prevBoard];
+        if (!newBoard[index] && !winner) {
+          newBoard[index] = currentPlayer;
+          checkWinner(newBoard);
+          return newBoard;
+        }
+        return prevBoard;
+      });
+
+      setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+    };
+    socket.off("updateBoard", handleUpdateBoard);
+    socket.on("updateBoard", handleUpdateBoard);
+
+    return () => {
+      socket.off("updateBoard", handleUpdateBoard);
+    };
+  }, [socket, winner]);
   useEffect(() => {
     if (Me == "") {
       let temme = window.prompt("Please enter your name:", "");
@@ -147,7 +155,6 @@ export default function Game() {
           onChange={(e) => setGameId(e.target.value)}
         />
         <h2 className="border-2 p-1 bg-slate-300 shadow-lg">
-          {" "}
           player : {currentPlayer}
         </h2>
 
@@ -168,12 +175,7 @@ export default function Game() {
           ))}
         </div>
         {winner && <div>Winner: {winner}</div>}
-        <button
-          className="drop-shadow-lg p-2 m-3 rounded-md bg-slate-200"
-          onClick={joinGame}
-        >
-          Join Game
-        </button>
+
         <button
           className="drop-shadow-lg p-2 m-3 rounded-md bg-slate-200"
           onClick={() => {
