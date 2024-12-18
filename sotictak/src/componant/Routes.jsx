@@ -35,12 +35,21 @@ export default function ComponantRoutes() {
           <Route
             path="/game/:gameId"
             element={
-              <BordSizeProvider>
-                <Game />
-              </BordSizeProvider>
+              <Socketprovider>
+                <BordSizeProvider>
+                  <Game />
+                </BordSizeProvider>
+              </Socketprovider>
             }
           />
-          <Route path="/loby" element={<Loby />} />
+          <Route
+            path="/loby"
+            element={
+              <Socketprovider>
+                <Loby />
+              </Socketprovider>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

@@ -5,7 +5,7 @@ const SocketContext = createContext();
 
 export default function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null);
-  const url = "https://soticktack-59a552ec0a64.herokuapp.com";
+  const url = "https://floating-sea-04785-dd6d76eba71c.herokuapp.com";
   // const url = "http://localhost:3000";
   useEffect(() => {
     const newSocket = io(url, {

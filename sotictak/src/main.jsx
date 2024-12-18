@@ -6,7 +6,5 @@ import Socketprovider from "./componant/Socketprovider";
 import ComponantRoutes from "./componant/Routes.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Socketprovider>
-    <ComponantRoutes />
-  </Socketprovider>
+  <ComponantRoutes />
 );
